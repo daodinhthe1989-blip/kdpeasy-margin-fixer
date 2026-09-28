@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KDPEasy Margin Fixer</title>
+<meta name="description" content="Turn any AI image into a print-ready KDP page — nothing cropped, nothing stretched.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="wordmark">
+    <span class="wm-1">KDPEasy</span> <span class="wm-2">Margin Fixer</span>
+  </div>
+  <div class="privacy-pill">
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+      <path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <rect x="4.5" y="10" width="15" height="10.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="12" cy="15.2" r="1.4" fill="currentColor"/>
+    </svg>
+    <span>Your image never leaves your computer.</span>
+  </div>
+</header>
+
+<p class="intro">Turn any AI image into a print-ready KDP page — nothing cropped, nothing stretched.</p>
+
+<main class="layout">
+
+  <!-- ============================= SIDEBAR ============================= -->
+  <aside class="sidebar">
+
+    <div id="bannerHost" class="banner-host" aria-live="polite"></div>
+
+    <!-- STEP 1 ------------------------------------------------------- -->
+    <section class="step" id="step1">
+      <div class="step-head">
+        <span class="badge">1</span>
+        <h2 class="step-label">Upload your image</h2>
+      </div>
+      <div class="step-body">
+        <button type="button" class="btn btn-secondary" id="chooseBtn">Choose image</button>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg" hidden>
+        <div class="file-info" id="fileInfo" hidden>
+          <span id="fileInfoText"></span>
+          <button type="button" class="link-btn" id="replaceBtn">Replace image</button>
+        </div>
+        <p class="hint">PNG or JPG. Drag it in, click to browse, or paste with Ctrl+V.</p>
+      </div>
+    </section>
+
+    <!-- STEP 2 ------------------------------------------------------- -->
+    <section class="step locked" id="step2">
+      <div class="step-head">
+        <span class="badge">2</span>
+        <h2 class="step-label"><label for="trimSelect">Choose your book size</label></h2>
+        <button type="button" class="help-btn" id="help2" aria-expanded="false" aria-label="About book size">?</button>
+        <div class="popover" id="pop2" role="dialog" aria-label="About book size" hidden>
+          This is the finished size of your printed book, chosen when you set up your paperback on
+          KDP. If you're not sure, 8.5 × 11 is the most common size for coloring books.
+        </div>
+      </div>
+      <div class="step-body">
+        <select id="trimSelect" class="control"></select>
+        <p class="hint">The finished size of your printed paperback.</p>
+      </div>
+    </section>
+
+    <!-- STEP 3 ------------------------------------------------------- -->
+    <section class="step locked" id="step3">
+      <div class="step-head">
+        <span class="badge">3</span>
+        <h2 class="step-label">Set your margins</h2>
+        <button type="button" class="help-btn" id="help3" aria-expanded="false" aria-label="About margins">?</button>
+        <div class="popover" id="pop3" role="dialog" aria-label="About margins" hidden>
+          Printing machines cut a tiny bit off every page, and the cut is never perfectly exact.
+          A safe margin keeps your artwork far enough from the edge that nothing important gets
+          sliced off.
+        </div>
+      </div>
+      <div class="step-body">
+
+        <div class="seg" role="group" aria-label="Bleed">
+          <button type="button" class="seg-btn is-on" id="bleedOff" aria-pressed="true">No bleed</button>
+          <button type="button" class="seg-btn" id="bleedOn" aria-pressed="false">Full bleed</button>
+        </div>
+        <p class="hint" id="bleedHint">Your artwork sits inside the page with white space around it. This is what most coloring books use.</p>
+
+        <div class="field" id="bleedPlacementField" hidden>
+          <label class="field-label">How should your artwork reach the edge?</label>
+          <div class="seg" role="group" aria-label="Bleed placement">
+            <button type="button" class="seg-btn is-on" id="placementCover" aria-pressed="true">Extend to edge</button>
+            <button type="button" class="seg-btn" id="placementFit" aria-pressed="false">Keep whole image</button>
+          </div>
+          <p class="hint" id="placementHint"></p>
+          <p class="note-warn" id="cropWarn" hidden></p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="marginSelect">Safe margin</label>
+          <select id="marginSelect" class="control">
+            <option value="0.25">0.25" — KDP minimum (no bleed)</option>
+            <option value="0.375">0.375" — KDP minimum (with bleed)</option>
+            <option value="0.5">0.5" — Recommended, extra safe</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <div class="custom-row" id="customRow" hidden>
+            <label class="sr-only" for="marginCustom">Custom safe margin in inches</label>
+            <input type="number" id="marginCustom" class="control" step="0.05" min="0" max="1" value="0.25">
+            <span class="unit">in</span>
+          </div>
+          <p class="note-warn" id="marginWarn" hidden></p>
+          <p class="hint">How far your artwork stays from the edge of the page.</p>
+        </div>
+
+        <details class="info-panel">
+          <summary>What about the inside (spine) margin?</summary>
+          <p>
+            Books also need extra space near the spine so artwork isn't swallowed by the binding —
+            KDP asks for 0.375" on books up to 150 pages, more on thicker ones. Your PDF tool
+            handles that when it lays out the pages. If your book is over 150 pages, pick a 0.5"
+            safe margin here to give yourself extra room.
+          </p>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- STEP 4 ------------------------------------------------------- -->
+    <section class="step locked" id="step4">
+      <div class="step-head">
+        <span class="badge">4</span>
+        <h2 class="step-label"><label for="fillSelect">Fill the space around your artwork</label></h2>
+        <button type="button" class="help-btn" id="help4" aria-expanded="false" aria-label="About margin fill">?</button>
+        <div class="popover" id="pop4" role="dialog" aria-label="About margin fill" hidden>
+          Your artwork is a different shape than the page, so there's leftover space around it.
+          This decides what goes in that space.
+        </div>
+      </div>
+      <div class="step-body">
+        <select id="fillSelect" class="control">
+          <option value="auto">Auto — pick for me (recommended)</option>
+          <option value="white">White</option>
+          <option value="solid">Solid color</option>
+          <option value="blur">Blurred background</option>
+        </select>
+        <p class="chip" id="autoChip" hidden></p>
+        <div class="solid-color-row" id="solidColorRow" hidden>
+          <button type="button" class="btn-swatch" id="colorSwatchBtn">
+            <span class="swatch swatch-lg" id="colorSwatchPreview"></span>
+            <span id="colorSwatchLabel">Pick color</span>
+          </button>
+          <button type="button" class="link-btn" id="colorResetBtn" hidden>Reset to auto-detected</button>
+          <input type="color" id="colorFallbackInput" hidden aria-label="Pick a solid color">
+        </div>
+        <p class="hint" id="fillHint">Looks at the edge of your image and chooses White, Solid, or Blur.</p>
+      </div>
+    </section>
+
+    <section class="step locked" id="stepFormat">
+      <div class="format-row">
+        <span class="field-label" id="formatLabel">Save as</span>
+        <div class="seg seg-sm" role="group" aria-labelledby="formatLabel">
+          <button type="button" class="seg-btn is-on" id="fmtPng" aria-pressed="true">PNG</button>
+          <button type="button" class="seg-btn" id="fmtJpg" aria-pressed="false">JPG</button>
+        </div>
+      </div>
+      <p class="hint" id="formatHint">Sharpest quality, best for line art. Files are larger.</p>
+    </section>
+
+    <div class="sidebar-foot">
+      <button type="button" class="btn btn-primary" id="downloadBtn" disabled title="Upload an image first.">
+        <span>Download PNG</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ============================= CONTENT ============================= -->
+  <section class="content">
+
+    <div class="preview-pin">
+    <div class="toolbar">
+      <div class="seg seg-sm" role="group" aria-label="Before / After">
+        <button type="button" class="seg-btn" id="btnBefore" aria-pressed="false">Before</button>
+        <button type="button" class="seg-btn" id="btnAfter" aria-pressed="false">After</button>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="guidesToggle" checked>
+        <span>Show safe-area guides</span>
+      </label>
+    </div>
+
+    <div class="stage" id="stage">
+
+      <!-- empty state / drop zone -->
+      <div class="empty" id="emptyState" tabindex="0" role="button" aria-label="Drop your image here, or press Enter to browse">
+        <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true" focusable="false">
+          <rect x="6" y="10" width="36" height="28" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="16.5" cy="20" r="3" fill="currentColor"/>
+          <path d="M9 34l10-10 7 7 6-5 7 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="empty-head">Drop your image here</p>
+        <p class="empty-sub">or click to browse — PNG or JPG</p>
+        <p class="empty-muted">You can also paste an image with Ctrl+V.</p>
+      </div>
+
+      <!-- compare view -->
+      <div class="compare" id="compare" hidden>
+        <div class="layer layer-before">
+          <canvas id="beforeCanvas"></canvas>
+        </div>
+        <div class="layer layer-after" id="layerAfter">
+          <div class="sheet" id="sheet">
+            <canvas id="previewCanvas"></canvas>
+            <canvas id="overlayCanvas" class="overlay"></canvas>
+          </div>
+        </div>
+        <span class="cmp-label cmp-left">BEFORE</span>
+        <span class="cmp-label cmp-right">AFTER</span>
+        <div class="divider" id="divider">
+          <div class="handle" id="handle" role="slider" tabindex="0"
+               aria-label="Compare before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">⟷</div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    </div>
+
+    </div>
+
+    <p class="empty-privacy" id="emptyPrivacy">Your image never leaves your computer.</p>
+
+    <div class="readout" id="readout" aria-live="polite">
+      <p class="readout-main" id="outMain">Output: —</p>
+      <p class="readout-sub" id="outSub"></p>
+      <p class="readout-sub" id="outSafe"></p>
+      <div class="quality" id="quality" hidden>
+        <p class="q-title" id="qTitle"></p>
+        <p class="q-copy" id="qCopy"></p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="app-footer">
+  <p>All processing happens in your browser. Your image never leaves your computer.</p>
+  <p>Sizes and margins follow Amazon KDP's official paperback guidelines.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
